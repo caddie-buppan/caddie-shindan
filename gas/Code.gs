@@ -1,11 +1,16 @@
 /**
+ * @OnlyCurrentDoc
+ *
  * Caddie｜Web集客・AI対策診断 — 回答受け取り用スクリプト（Google Apps Script）
  *
+ * 権限を「このスプレッドシートだけ」に絞っているため、Googleにブロックされにくい作りです。
+ *
  * 使い方:
- *   1. https://script.google.com で「新しいプロジェクト」を作成し、このコードを貼り付けて保存
- *   2. 関数「setup」を選んで実行（初回は権限の許可が必要）
- *      → 回答用スプレッドシートが作られ、実行ログにURLが出ます
- *   3. 右上「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」
+ *   1. 回答を貯めたいGoogleアカウントで、新しいGoogleスプレッドシートを作成（https://sheets.new）
+ *   2. メニュー「拡張機能」→「Apps Script」を開き、このコードを貼り付けて保存
+ *   3. 関数「setup」を選んで実行し、権限を許可
+ *      （「Googleで確認されていません」と出たら「詳細」→「（安全ではないページ）に移動」）
+ *   4. 右上「デプロイ」→「新しいデプロイ」→ 種類「ウェブアプリ」
  *        次のユーザーとして実行: 自分
  *        アクセスできるユーザー: 全員
  *      → 発行された「ウェブアプリURL」（https://script.google.com/macros/s/…/exec）を
@@ -13,11 +18,11 @@
  *
  * 動き:
  *   - 結果画面が表示された時点で、点数を1行記録します（無料診断希望＝いいえ）
- *   - 無料診断に申し込まれると、同じ行に連絡先を追記し、通知メールを送ります
+ *   - 無料診断に申し込まれると、同じ行に連絡先を追記します
+ *   - 申し込みのメール通知は、スプレッドシートの「ツール」→「通知設定」→「通知を編集」で設定できます
  */
 
 const SHEET_NAME = '診断結果';
-const NOTIFY = true; // 申し込み時に自分宛てへメール通知する
 const QUESTION_COUNT = 10;
 const VALID_POINTS = [0, 5, 10];
 
@@ -28,13 +33,14 @@ const HEADERS = [
 ];
 
 function setup() {
-  const ss = SpreadsheetApp.create('Caddie｜Web集客・AI対策診断（回答）');
-  const sheet = ss.getSheets()[0].setName(SHEET_NAME);
-  sheet.appendRow(HEADERS);
-  sheet.setFrozenRows(1);
-  sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
-  PropertiesService.getScriptProperties().setProperty('SHEET_ID', ss.getId());
-  Logger.log('回答シート: ' + ss.getUrl());
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const sheet = ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0].setName(SHEET_NAME);
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(HEADERS);
+    sheet.setFrozenRows(1);
+    sheet.getRange(1, 1, 1, HEADERS.length).setFontWeight('bold');
+  }
+  Logger.log('準備完了: ' + ss.getUrl());
 }
 
 function doPost(e) {
@@ -67,18 +73,13 @@ function doPost(e) {
       ...scores,
     ];
 
-    const sheet = SpreadsheetApp
-      .openById(PropertiesService.getScriptProperties().getProperty('SHEET_ID'))
-      .getSheetByName(SHEET_NAME);
-
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
     const found = sheet.getRange('A:A').createTextFinder(id).matchEntireCell(true).findNext();
     if (found) {
       sheet.getRange(found.getRow(), 1, 1, row.length).setValues([row]);
     } else {
       sheet.appendRow(row);
     }
-
-    if (consult && NOTIFY) notify_(row, sheet.getParent().getUrl());
     return ok_();
   } finally {
     lock.releaseLock();
@@ -96,24 +97,6 @@ function clean_(value, max) {
   let s = String(value == null ? '' : value).trim().slice(0, max);
   if (/^[=+\-@]/.test(s)) s = "'" + s;
   return s;
-}
-
-function notify_(row, sheetUrl) {
-  const [, , total, band, , company, name, contact] = row;
-  MailApp.sendEmail({
-    to: Session.getEffectiveUser().getEmail(),
-    subject: `【Web集客診断】無料診断の申し込み：${company} ${name}様（${total}点）`,
-    body: [
-      'Web集客・AI対策診断から無料診断の申し込みがありました。',
-      '',
-      `会社名：${company}`,
-      `お名前：${name}`,
-      `ご連絡先：${contact}`,
-      `スコア：${total}点（${band}）`,
-      '',
-      `回答シート：${sheetUrl}`,
-    ].join('\n'),
-  });
 }
 
 function ok_() {
