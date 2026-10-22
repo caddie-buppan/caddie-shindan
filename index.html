@@ -1,0 +1,423 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>経営者のためのWeb集客・AI対策診断｜Caddie</title>
+<meta name="description" content="60秒でチェック。全10問・100点満点で、自社のWeb集客とAI検索対策の状況がわかる無料診断です。">
+<meta property="og:title" content="経営者のためのWeb集客・AI対策診断｜Caddie">
+<meta property="og:description" content="60秒でチェック。全10問・100点満点の無料診断。">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #1c2b3a;
+    --teal: #2b7a8c;
+    --teal-soft: #e6f1f3;
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #1f2933;
+    --muted: #6b7682;
+    --line: #e1e6ea;
+    --red: #c8553d;
+    --amber: #d09a2a;
+    --green: #2f8f5b;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+  header { background: var(--navy); color: #fff; padding: 22px 0 20px; }
+  .brand { font-size: 26px; font-weight: 500; letter-spacing: .01em; line-height: 1.2; }
+  header h1 { font-size: 19px; font-weight: 700; margin: 4px 0 6px; line-height: 1.5; }
+  .meta { font-size: 13px; color: #b9c4cf; }
+
+  main { padding: 24px 0 40px; }
+  .card { background: var(--card); border-radius: 14px; padding: 24px 20px; box-shadow: 0 1px 3px rgba(28,43,58,.08); }
+  .screen[hidden] { display: none; }
+
+  h2 { font-size: 20px; margin: 0 0 12px; line-height: 1.5; }
+  p { margin: 0 0 12px; }
+  .lead { color: var(--muted); font-size: 15px; }
+  .points { display: flex; gap: 8px; flex-wrap: wrap; margin: 16px 0 24px; padding: 0; list-style: none; }
+  .points li { background: var(--teal-soft); color: var(--teal); font-size: 13px; font-weight: 500; padding: 4px 12px; border-radius: 999px; }
+
+  .btn {
+    display: block; width: 100%; border: 0; border-radius: 10px; cursor: pointer;
+    font: inherit; font-weight: 700; font-size: 16px; padding: 15px 16px;
+    background: var(--teal); color: #fff; text-align: center; text-decoration: none;
+  }
+  .btn:hover { filter: brightness(1.06); }
+  .btn:disabled { opacity: .6; cursor: default; }
+  .btn-ghost { background: transparent; color: var(--teal); font-weight: 500; }
+
+  /* 設問 */
+  .progress { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .progress-bar { flex: 1; height: 6px; background: var(--line); border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--teal); width: 0; transition: width .25s ease; }
+  .progress-num { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .q-no { color: var(--teal); font-weight: 700; font-size: 14px; }
+  .q-text { font-size: 19px; font-weight: 700; margin: 4px 0 22px; line-height: 1.6; min-height: 3.2em; }
+  .choices { display: grid; gap: 10px; }
+  .choice {
+    display: flex; justify-content: space-between; align-items: center;
+    width: 100%; padding: 15px 18px; border: 1.5px solid var(--line); border-radius: 10px;
+    background: #fff; font: inherit; font-size: 16px; font-weight: 500; color: var(--text); cursor: pointer; text-align: left;
+  }
+  .choice span { color: var(--muted); font-size: 13px; font-weight: 400; }
+  .choice:hover { border-color: var(--teal); }
+  .choice.selected { border-color: var(--teal); background: var(--teal-soft); }
+  .q-nav { margin-top: 14px; }
+  .q-nav .btn-ghost { width: auto; padding: 8px 0; font-size: 14px; }
+
+  /* 結果 */
+  .score-box { text-align: center; padding: 6px 0 18px; }
+  .score-ring { width: 168px; height: 168px; display: block; margin: 0 auto 10px; }
+  .score-num { font-size: 44px; font-weight: 700; fill: var(--navy); }
+  .score-unit { font-size: 14px; fill: var(--muted); }
+  .band { display: inline-block; font-weight: 700; font-size: 15px; padding: 4px 16px; border-radius: 999px; color: #fff; }
+  .band-message { margin-top: 14px; text-align: left; }
+  .scale { font-size: 12px; color: var(--muted); text-align: center; margin-top: 4px; }
+
+  .section-title { font-size: 16px; font-weight: 700; margin: 26px 0 10px; padding-top: 20px; border-top: 1px solid var(--line); }
+  .tips { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  .tips li { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; }
+  .tip-head { display: flex; gap: 8px; align-items: baseline; font-weight: 700; font-size: 14px; }
+  .tag { flex: none; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 4px; color: #fff; }
+  .tag-no { background: var(--red); }
+  .tag-part { background: var(--amber); }
+  .tip-body { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .cta { background: var(--navy); color: #fff; border-radius: 14px; padding: 24px 20px; margin-top: 20px; }
+  .cta h2 { color: #fff; font-size: 18px; }
+  .cta p { color: #d3dbe2; font-size: 14px; }
+  .cta .note { font-size: 12px; color: #9fb0bf; }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-size: 13px; font-weight: 500; margin-bottom: 4px; color: #e7edf2; }
+  .field label small { color: #9fb0bf; font-weight: 400; margin-left: 6px; }
+  .field input {
+    width: 100%; font: inherit; font-size: 16px; padding: 12px 14px;
+    border-radius: 8px; border: 1px solid #3a4c5e; background: #fff; color: var(--text);
+  }
+  .hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+  .error { color: #ffb4a3; font-size: 13px; min-height: 1.2em; margin: 4px 0 10px; }
+
+  .thanks { text-align: center; }
+  .thanks .check { width: 56px; height: 56px; border-radius: 50%; background: var(--teal-soft); color: var(--teal); display: grid; place-items: center; margin: 4px auto 14px; font-size: 28px; font-weight: 700; }
+
+  footer { text-align: center; font-size: 12px; color: var(--muted); padding: 0 0 32px; }
+  footer strong { color: var(--teal); font-weight: 500; }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">Caddie</div>
+    <h1>経営者のための Web集客・AI対策診断</h1>
+    <div class="meta">60秒でチェック ｜ 全10問 ｜ 100点満点</div>
+  </div>
+</header>
+
+<main class="wrap">
+  <!-- スタート -->
+  <section id="screen-start" class="screen card">
+    <h2>自社のWeb集客、何点ですか？</h2>
+    <p class="lead">ホームページ・Google検索・マップ・口コミ・広告・AI検索まで、10の質問に答えるだけで現状の点数と改善ポイントがわかります。</p>
+    <ul class="points">
+      <li>無料</li><li>約60秒</li><li>結果はすぐに表示</li>
+    </ul>
+    <button class="btn" id="start-btn" type="button">診断をはじめる</button>
+  </section>
+
+  <!-- 設問 -->
+  <section id="screen-quiz" class="screen card" hidden>
+    <div class="progress">
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-num" id="progress-num">1 / 10</div>
+    </div>
+    <div class="q-no" id="q-no">Q01</div>
+    <div class="q-text" id="q-text"></div>
+    <div class="choices" id="choices"></div>
+    <div class="q-nav"><button class="btn btn-ghost" id="back-btn" type="button">← 前の質問に戻る</button></div>
+  </section>
+
+  <!-- 結果 -->
+  <section id="screen-result" class="screen" hidden>
+    <div class="card">
+      <div class="score-box">
+        <svg class="score-ring" viewBox="0 0 168 168" aria-hidden="true">
+          <circle cx="84" cy="84" r="72" fill="none" stroke="#e1e6ea" stroke-width="12"/>
+          <circle id="ring" cx="84" cy="84" r="72" fill="none" stroke="#2b7a8c" stroke-width="12"
+                  stroke-linecap="round" transform="rotate(-90 84 84)"
+                  stroke-dasharray="452.4" stroke-dashoffset="452.4" style="transition: stroke-dashoffset .8s ease"/>
+          <text x="84" y="92" text-anchor="middle" class="score-num" id="score-num">0</text>
+          <text x="84" y="116" text-anchor="middle" class="score-unit">/ 100点</text>
+        </svg>
+        <div class="band" id="band"></div>
+        <div class="scale">0〜49：要改善 ／ 50〜79：改善余地あり ／ 80〜100：運用充実</div>
+        <p class="band-message" id="band-message"></p>
+      </div>
+
+      <div id="tips-wrap">
+        <div class="section-title">改善ポイント</div>
+        <ul class="tips" id="tips"></ul>
+      </div>
+    </div>
+
+    <div class="cta">
+      <h2>無料のWeb集客診断・改善提案</h2>
+      <p>Caddieの担当者が、今回の結果をもとに課題整理と改善案をご案内します。</p>
+      <p class="note">※79点以下の方を中心にご案内していますが、80点以上の方もご相談いただけます。診断点数は簡易的な目安です。</p>
+      <form id="contact-form" novalidate>
+        <div class="field">
+          <label for="company">会社名</label>
+          <input id="company" name="company" autocomplete="organization" required>
+        </div>
+        <div class="field">
+          <label for="name">お名前</label>
+          <input id="name" name="name" autocomplete="name" required>
+        </div>
+        <div class="field">
+          <label for="contact">ご連絡先<small>メールアドレスまたは電話番号</small></label>
+          <input id="contact" name="contact" autocomplete="email" required>
+        </div>
+        <div class="hp" aria-hidden="true">
+          <label for="website">website</label>
+          <input id="website" name="website" tabindex="-1" autocomplete="off">
+        </div>
+        <div class="error" id="form-error" role="alert"></div>
+        <button class="btn" id="submit-btn" type="submit">無料診断を申し込む</button>
+        <p class="note" style="margin-top:10px">ご記入いただいた情報は、希望された診断・ご連絡の目的に限り利用します。</p>
+      </form>
+    </div>
+
+    <button class="btn btn-ghost" id="retry-btn" type="button" style="margin-top:12px">もう一度診断する</button>
+  </section>
+
+  <!-- 送信完了 -->
+  <section id="screen-thanks" class="screen card thanks" hidden>
+    <div class="check">✓</div>
+    <h2>お申し込みありがとうございました</h2>
+    <p class="lead">Caddieの担当者より、後日ご連絡いたします。</p>
+  </section>
+</main>
+
+<footer>
+  <strong>株式会社Caddie</strong> ｜ Webマーケティング支援
+</footer>
+
+<script>
+  // GASのウェブアプリURL（デプロイ後に貼り付け）
+  const ENDPOINT = '';
+
+  const QUESTIONS = [
+    { q: '自社のホームページを運用している',
+      tip: 'ホームページは会社の信頼を伝える土台です。サービス内容・実績・問い合わせ先がすぐわかる状態にしましょう。' },
+    { q: 'ホームページ経由で定期的に問い合わせがある',
+      tip: '問い合わせボタンの位置や入力項目の数を見直すだけで、問い合わせ数が変わることがあります。' },
+    { q: 'Google検索で自社の主要サービスが見つかりやすい',
+      tip: '「サービス名 × 地域名」などで検索して、自社が何番目に表示されるか確認してみましょう。' },
+    { q: 'Googleマップの店舗・会社情報を整備している',
+      tip: 'Googleビジネスプロフィールの営業時間・写真・サービス内容を最新にしておくと、マップからの来店・問い合わせにつながります。' },
+    { q: 'Googleの口コミ獲得や返信に取り組んでいる',
+      tip: '口コミへの返信は、これから問い合わせる人にも見られています。返信の有無で印象が大きく変わります。' },
+    { q: 'Google広告・SNS広告などを活用している',
+      tip: '広告は少額からでも始められます。反応のよいキーワードや地域を見つけることが第一歩です。' },
+    { q: '広告費と問い合わせ・売上の関係を把握している',
+      tip: '問い合わせ1件あたりにかかった広告費がわかると、予算を増やすべきか減らすべきか判断しやすくなります。' },
+    { q: 'AI検索（ChatGPT等）での自社の見え方を確認している',
+      tip: 'ChatGPTなどに自社のサービスや地域名で質問してみると、AIからどう紹介されているかがわかります。' },
+    { q: '競合企業のWeb集客状況を定期的に確認している',
+      tip: '競合の広告・口コミ・サイトの更新状況は、自社の改善ヒントの宝庫です。' },
+    { q: 'Web集客を改善する担当者や相談先が決まっている',
+      tip: '担当者か相談先を決めておくと、改善が途中で止まらず続けられます。' },
+  ];
+
+  const CHOICES = [
+    { label: 'はい', points: 10 },
+    { label: '一部', points: 5 },
+    { label: 'いいえ', points: 0 },
+  ];
+
+  const BANDS = [
+    { min: 80, label: '運用充実', color: 'var(--green)',
+      message: 'Web集客の基本はしっかり押さえられています。広告の費用対効果やAI検索への対応など、さらに成果を伸ばす余地を探していきましょう。' },
+    { min: 50, label: '改善余地あり', color: 'var(--amber)',
+      message: '基本はできていますが、取りこぼしている問い合わせがありそうです。下の改善ポイントから手をつけると、効果が出やすい状態です。' },
+    { min: 0, label: '要改善', color: 'var(--red)',
+      message: 'Web集客の土台づくりから始めることで、問い合わせが増える余地が大きい状態です。まずは下の改善ポイントを確認してみてください。' },
+  ];
+
+  const sessionId = (crypto.randomUUID && crypto.randomUUID()) ||
+    Date.now().toString(36) + Math.random().toString(36).slice(2);
+  const answers = new Array(QUESTIONS.length).fill(null);
+  let current = 0;
+
+  const $ = id => document.getElementById(id);
+
+  function show(name) {
+    document.querySelectorAll('.screen').forEach(s => { s.hidden = s.id !== 'screen-' + name; });
+    window.scrollTo({ top: 0 });
+  }
+
+  function renderQuestion() {
+    const no = String(current + 1).padStart(2, '0');
+    $('q-no').textContent = 'Q' + no;
+    $('q-text').textContent = QUESTIONS[current].q;
+    $('progress-num').textContent = (current + 1) + ' / ' + QUESTIONS.length;
+    $('progress-fill').style.width = (current / QUESTIONS.length * 100) + '%';
+    $('back-btn').style.visibility = current === 0 ? 'hidden' : 'visible';
+
+    const box = $('choices');
+    box.innerHTML = '';
+    CHOICES.forEach((c, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'choice' + (answers[current] === i ? ' selected' : '');
+      b.innerHTML = c.label + '<span>' + c.points + '点</span>';
+      b.addEventListener('click', () => choose(i));
+      box.appendChild(b);
+    });
+  }
+
+  function choose(i) {
+    answers[current] = i;
+    renderQuestion();
+    setTimeout(() => {
+      if (current < QUESTIONS.length - 1) {
+        current++;
+        renderQuestion();
+      } else {
+        showResult();
+      }
+    }, 180);
+  }
+
+  function totalScore() {
+    return answers.reduce((sum, a) => sum + CHOICES[a].points, 0);
+  }
+
+  function bandFor(total) {
+    return BANDS.find(b => total >= b.min);
+  }
+
+  function showResult() {
+    const total = totalScore();
+    const band = bandFor(total);
+
+    $('score-num').textContent = total;
+    $('band').textContent = band.label;
+    $('band').style.background = band.color;
+    $('band-message').textContent = band.message;
+
+    // いいえ → 一部 の順で改善ポイントを表示
+    const weak = answers
+      .map((a, i) => ({ a, i }))
+      .filter(x => x.a !== 0)
+      .sort((x, y) => y.a - x.a || x.i - y.i);
+    const list = $('tips');
+    list.innerHTML = '';
+    weak.forEach(({ a, i }) => {
+      const li = document.createElement('li');
+      const tagClass = a === 2 ? 'tag-no' : 'tag-part';
+      li.innerHTML =
+        '<div class="tip-head"><span class="tag ' + tagClass + '">' + CHOICES[a].label + '</span>' +
+        '<span>Q' + String(i + 1).padStart(2, '0') + ' ' + QUESTIONS[i].q + '</span></div>' +
+        '<div class="tip-body">' + QUESTIONS[i].tip + '</div>';
+      list.appendChild(li);
+    });
+    $('tips-wrap').hidden = weak.length === 0;
+
+    show('result');
+    const ring = $('ring');
+    ring.setAttribute('stroke', getComputedStyle(document.documentElement)
+      .getPropertyValue(band.color.slice(4, -1)).trim());
+    requestAnimationFrame(() => {
+      ring.setAttribute('stroke-dashoffset', String(452.4 * (1 - total / 100)));
+    });
+
+    send(payload(false));
+  }
+
+  function payload(consult) {
+    const total = totalScore();
+    return {
+      id: sessionId,
+      total: total,
+      band: bandFor(total).label,
+      scores: answers.map(a => CHOICES[a].points),
+      consult: consult,
+      company: consult ? $('company').value.trim() : '',
+      name: consult ? $('name').value.trim() : '',
+      contact: consult ? $('contact').value.trim() : '',
+      website: $('website').value,
+      source: location.search,
+      referrer: document.referrer,
+    };
+  }
+
+  function send(data) {
+    if (!ENDPOINT) return Promise.resolve(false);
+    return fetch(ENDPOINT, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(data),
+    }).then(() => true).catch(() => false);
+  }
+
+  $('start-btn').addEventListener('click', () => {
+    current = 0;
+    renderQuestion();
+    show('quiz');
+  });
+
+  $('back-btn').addEventListener('click', () => {
+    if (current > 0) { current--; renderQuestion(); }
+  });
+
+  $('retry-btn').addEventListener('click', () => {
+    answers.fill(null);
+    current = 0;
+    renderQuestion();
+    show('quiz');
+  });
+
+  $('contact-form').addEventListener('submit', async e => {
+    e.preventDefault();
+    const err = $('form-error');
+    const missing = ['company', 'name', 'contact'].filter(id => !$(id).value.trim());
+    if (missing.length) {
+      err.textContent = '会社名・お名前・ご連絡先をすべてご記入ください。';
+      $(missing[0]).focus();
+      return;
+    }
+    if (!ENDPOINT) {
+      err.textContent = '現在送信を受け付けていません。時間をおいて再度お試しください。';
+      return;
+    }
+    err.textContent = '';
+    const btn = $('submit-btn');
+    btn.disabled = true;
+    btn.textContent = '送信中…';
+    const ok = await send(payload(true));
+    if (ok) {
+      show('thanks');
+    } else {
+      btn.disabled = false;
+      btn.textContent = '無料診断を申し込む';
+      err.textContent = '送信できませんでした。通信環境をご確認のうえ、もう一度お試しください。';
+    }
+  });
+</script>
+</body>
+</html>
